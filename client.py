@@ -10,7 +10,7 @@ from time import sleep
 
 import player
 
-app = Ursina()
+app = Ursina(title="Client")
 
 
 Client = UrsinaNetworkingClient("localhost", 55555)

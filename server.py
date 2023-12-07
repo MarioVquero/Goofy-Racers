@@ -7,8 +7,10 @@ from ursinanetworking import *
 from ursina import *
 # import asyncio
 
+app = Ursina(title="Server")
 Server = UrsinaNetworkingServer("localhost", 55555)
 Easy = EasyUrsinaNetworkingServer(Server)
+
 
 @Server.event
 def onClientConnected(client):
@@ -26,12 +28,13 @@ def MyPosition(Client, NewPos):
     Easy.update_replicated_variable_by_name(f"player_{Client.id}", "position",NewPos)
 
 
-# ground = Entity(
-#     model = 'cube',
-#     # texture = 'grass.png',
-#     scale = (100,1,100),
-#     collider= 'box'
-# )
+ground = Entity(
+    model = 'cube',
+    texture = 'grass.png',
+    scale = (100,1,100),
+    collider= 'box',
+)
 
+app.run()
 while True:
     Easy.process_net_events()
