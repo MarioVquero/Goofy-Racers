@@ -10,8 +10,9 @@ class Server:
         self.server_update = False
 
     def update_server(self):
+        # print("starting server ")
         if self.start_server:
-            self.server = UrsinaNetworkingServer(self.ip.text, int(self.port.text))
+            self.server = UrsinaNetworkingServer(self.ip, int(self.port))
             self.easy = EasyUrsinaNetworkingServer(self.server)
 
             @self.server.event
@@ -31,7 +32,7 @@ class Server:
             def MyPosition(client,newpos):
                 self.easy.update_replicated_variable_by_name(f"player_{client.id}", "position", newpos)
 
-            @self.sever.event
+            @self.server.event
             def MyRotation(client, newrot):
                 self.easy.update_replicated_variable_by_name(f"player_{client.id}", "rotation", newrot)
 
@@ -49,12 +50,12 @@ class Server:
 if __name__ == "__main__":
     
     app = Ursina()
-    window.title = "Goofy Racers"
+    window.title = "Goofy Racers Server Test"
     window.borderless = False
 
     # camera.ui needs to be that parent of these input fields
-    ip = InputField(default_value= "IP", limit_content_to = "0123456789.localhost", color = color.black,alpha = 100, y= 0.1,parent = camera.ui)
-    port = InputField(default_value= "PORT", limit_content_to = "0123456789", color = color.black,alpha = 100, y = 0.02, parent = camera.ui)
+    ip = "localhost"#InputField(default_value= "IP", limit_content_to = "0123456789.localhost", color = color.black,alpha = 100, y= 0.1,parent = camera.ui)
+    port = 55555#InputField(default_value= "PORT", limit_content_to = "0123456789", color = color.black,alpha = 100, y = 0.02, parent = camera.ui)
 
     server = Server(ip,port)
 
@@ -62,12 +63,14 @@ if __name__ == "__main__":
 
     # camera.ui needs to be the parent of these input fields
     def create_server():
+        
         server.start_server = True
         running = Text(text="Running server...", scale = 1.5, line_height = 2, x=0, origin = 0,y=0, parent = camera.ui)
         create_server_button.disable()
-        ip.disable()
-        port.disable()
+        # ip.disable()
+        # port.disable()
         stop_button.enable()
+        print("Server has been made")
 
     def stop_server():
         os._exit(0)
