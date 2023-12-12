@@ -2,6 +2,7 @@ from ursinanetworking import *
 from ursina import Entity, Vec3, color,destroy
 from ursina.prefabs.first_person_controller import FirstPersonController
 
+# have to make a camera because FirstPersonController bugs out the whole thing
 
 # the player class that has all the default values
 class Player(FirstPersonController):
