@@ -5,7 +5,7 @@ import os
 Text.default_resolution = 1080 * Text.size
 
 class MainMenu(Entity):
-    def __init__(self, player):
+    def __init__(self, player, main_track):
         super().__init__(
             parent = camera.ui
         )
@@ -20,7 +20,15 @@ class MainMenu(Entity):
         self.main_menu = Entity(parent = self, enabled = False)
         self.quit_menu = Entity(parent = self, enabled = False)
         
-        # self.ground = ground
+        self.main_track = main_track
+
+        def main_track_func():
+            self.player.visible = True
+            # mouse.locked = True
+            self.player.position = (0,2,0)
+            self.player.rotation = (0,90,0)
+            main_track.enable()
+
 
         # switches the UI from start menu to host
         def multiplayer():
@@ -56,6 +64,7 @@ class MainMenu(Entity):
         # switches UI from host menu to server_menu names will change in the future for clarification
         def join_server_func():
             print("join server process")
+            main_track.enable()
             self.host_menu.disable()
             self.server_menu.enable()
 
@@ -83,6 +92,9 @@ class MainMenu(Entity):
                 player.multiplayer = True
                 self.server_menu.disable()
                 self.main_menu.enable()
+                main_track_func()
+                print("track should load here")
+                
 
         # change UI from server_menu to host
         def back_server():
@@ -125,7 +137,7 @@ class MainMenu(Entity):
         back_button_host.on_click = Func(back_host)
 
         # button for joining an existing server
-        join_hosted_server = Button(text = "Join Server", color = color.hex("F58300"), highlight_color = color.gray, scale_y = 0.1, scale_x = 0.3, y = -0.1, parent = self.created_server_menu)
+        join_hosted_server = Button(text = "Join Hosted Server", color = color.hex("F58300"), highlight_color = color.gray, scale_y = 0.1, scale_x = 0.3, y = -0.1, parent = self.created_server_menu)
         
         # not sure what this does at the moment might have missed this
         running = Text(text= "Running server...", scale =1.5, line_height = 2, x=0,origin = 0, y=0.2, parent = self.created_server_menu)

@@ -1,7 +1,11 @@
+from direct.stdpy import thread
 from ursina import *
 from testPlayer import Player
 from multiplayer import Multiplayer
 import main_menu
+
+
+from TracksFolder.MainTrack import MainTrack
 
 # started script cant complete till other scripts are done
 # testplayer - partially complete camera needs a couple of lines to track and move with player but lets UI work now
@@ -14,19 +18,62 @@ import main_menu
 app = Ursina()
 window.title = "Goofy Racers"
 
-ply = Player()
 
-main_menu = main_menu.MainMenu(ply)
+
+#######################################################################################################################################
+
+
+                                                    # LOADING ASSETS
+
+def load_assets():
+    models_to_load = [
+
+    ]
+
+    textures_to_load = [
+
+    ]
+
+    for i, m in enumerate(models_to_load):
+        load_model(m)
+    
+    for i,t in enumerate(textures_to_load):
+        load_model(t)
+
+try:
+    thread.start_new_thread(function=load_assets,args="")
+except Exception as e:
+    print("error starting new thread",e)
+
+
+#######################################################################################################################################
+
+
+
+ply = Player()
+ply
+
+# Main Track
+main_track = MainTrack(ply)
+
+ply.main_track = main_track
+
+main_menu = main_menu.MainMenu(ply, main_track)
 
 Sky()
+
+
+
+
+
 
 def update():
     # if multiplayer call multiplayer class should be default
     if ply.multiplayer:
         global multiplayer
         multiplayer = Multiplayer(ply)
-        Player.multiplayer_update = True
-        Player.multiplayer = False
+        ply.multiplayer_update = True
+        ply.multiplayer = False
     
     if ply.multiplayer_update:
         if multiplayer.client.connected:
@@ -56,6 +103,6 @@ def input(key):
         multiplayer.client.send_message("MyPosition", tuple(ply.position))
         multiplayer.client.send_message("MyRotation", tuple(ply.rotation))
         multiplayer.client.send_message("MyTexture", str(ply.texture))
-        multiplayer.client.send_message("MyModel", str(ply.model_path))
+        multiplayer.client.send_message("MyModel", str("cube"))
 
 app.run()
