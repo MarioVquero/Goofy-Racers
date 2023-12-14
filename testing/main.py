@@ -51,7 +51,7 @@ except Exception as e:
 
 
 ply = Player()
-ply
+ply.player_car()
 
 # Main Track
 main_track = MainTrack(ply)
@@ -68,7 +68,7 @@ Sky()
 
 
 def update():
-    
+
     # if multiplayer call multiplayer class should be default
     if ply.multiplayer:
         global multiplayer

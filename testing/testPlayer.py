@@ -24,8 +24,8 @@ class Player(Entity):
 
         # Player values
         self.speed = 30
-        self.velocity_y = 0
-        self.rotation_speed = 0
+        self.velocity_y = 10
+        self.rotation_speed = 10
         self.max_rotation_speed = 2.6
         self.steering_amount = 8
         self.topSpeed = topSpeed
@@ -50,12 +50,19 @@ class Player(Entity):
         self.pivot.position = self.position
         self.pivot.rotation = self.rotation
         
+        # Collision stuff
+        self.copy_normals = False
+
 
 
         # Bools for collision
         self.hitting_wall = False
         self.atFinishLine = False
         
+        # books for driving
+        self.driving = False
+        self.driving = True
+
         # Making sure Tracks is accessible in update
         self.main_track = None
 
@@ -69,16 +76,16 @@ class Player(Entity):
         self.connected_text = True
         self.disconnected_text = False
 
+    def player_car(self):
+        self.model = "cube"
+        self.texture = "grass.png"
+        self.topSpeed = 30
+        self.accelaration = 10
+        self.turning_Speed = 7
+        self.max_rotation_speed = 3
+        self.steering_amount = 7.5
 
-        def player_car(self):
-            self.model = "cube"
-            self.texture = "grass.png"
-            self.topSpeed = 30
-            self.accelaration = 0.3
-            self.turning_Speed = 7
-            self.max_rotation_speed = 3
-            self.steering_amount = 7.5
-
+    def update(self):
         if self.camera_follow:
             if self.camera_angle == "top":
                 if self.change_camera:
@@ -94,16 +101,16 @@ class Player(Entity):
         # self.pivot_rotation_distance = (self.rotation_y - self.pivot.rotation_y)
 
         # Gravity
-        movementY = self.velocity_y/50
+        movementY = self.velocity_y / 50 * time.dt
         direction = (0, sign(movementY), 0)
 
         # main raycast for collision
-        self.y_ray = raycast(origin = self.world_position, direction = (0,-1,0), ignore = [self, ])
+        y_ray = raycast(origin=self.world_position,direction=(0,-1,0),ignore=[self,])
         
-        if self.y_ray.distance <= 5:
+        if y_ray.distance <= 10:
             if held_keys[self.controls[0]] or held_keys["up arrow"]:
                 print(self.controls[0])
-                print(self.y_ray.distance)
+                print(y_ray.distance)
                 self.speed += self.accelaration * 50 * time.dt
                 self.speed += -self.velocity_y * 4 * time.dt
 
@@ -135,19 +142,17 @@ class Player(Entity):
             if held_keys[self.controls[1]] or held_keys["left arrow"]:
                 print(self.controls[1])
                 self.rotation_speed -= self.steering_amount * time.dt
-                self.drift_speed -= 5 * time.dt
                 if self.speed > 1:
-                    self.speed -= self.turning_speed * time.dt
+                    self.speed -= self.turning_Speed * time.dt
                 elif self.speed < 0:
-                    self.speed += self.turning_speed / 5 * time.dt
+                    self.speed += self.turning_Speed / 5 * time.dt
             elif held_keys[self.controls[3]] or held_keys["right arrow"]:
                 print(self.controls[3])
                 self.rotation_speed += self.steering_amount * time.dt
-                self.drift_speed -= 5 * time.dt
                 if self.speed > 1:
-                    self.speed -= self.turning_speed * time.dt
+                    self.speed -= self.turning_Speed * time.dt
                 elif self.speed < 0:
-                    self.speed += self.turning_speed / 5 * time.dt
+                    self.speed += self.turning_Speed / 5 * time.dt
 
         # # Cap the speed
         # if self.speed >= self.topspeed:
@@ -167,7 +172,6 @@ class Player(Entity):
         self.rotation_parent.position = self.position
 
         # not sure if necessart but leaving uncommented for easy access
-
         # Lerps the car's rotation to the rotation parent's rotation (Makes it smoother)
         # self.rotation_x = lerp(self.rotation_x, self.rotation_parent.rotation_x, 20 * time.dt)
         # self.rotation_z = lerp(self.rotation_z, self.rotation_parent.rotation_z, 20 * time.dt)
@@ -175,25 +179,26 @@ class Player(Entity):
         # check if car is hitting the ground
 
         if self.visible:
-            if self.y_ray.distance <= self.scale_y * 1.7 + abs(movementY):
+            print(y_ray.distance)
+            if y_ray.distance <= self.scale_y * 2 + abs(movementY):
                 self.velocity_y = 0
                 # check if collision with wall or steep slope
-                if self.y_ray.world_normal.y > 0.7 and self.y_ray.world_point.y - self.world_y < 0.5:
+                if y_ray.world_normal.y > 0.7 and y_ray.world_point.y - self.world_y < 0.5:
                     # set the y value to the grounds y value
-                    self.y = self.y_ray.world_point.y = 1.4
+                    self.y = y_ray.world_point.y = 1.4
                     self.hitting_wall = False
                 else:
                     self.hitting_wall = True
                 
                 if self.copy_normals:
-                    self.ground_normal = self.position + self.y_ray.world_normal
+                    self.ground_normal = self.position + y_ray.world_normal
                 else:
                     self.ground_normal = self.position + (0,180,0)
 
                 # rotates the car according the ground normals
                 if not self.hitting_wall:
                     self.rotation_parent.look_at(self.ground_normal, axis="up")
-                    self.rotation_parent.rotate((0,self.rotation_y + 180, 0))
+                    # self.rotation_parent.rotate((0,self.rotation_y + 180, 0))
 
                 else:
                     self.rotation_parent.rotation = self.rotation
