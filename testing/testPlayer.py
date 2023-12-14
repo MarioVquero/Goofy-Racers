@@ -1,6 +1,5 @@
 from ursinanetworking import *
 from ursina import Entity, Vec3, color,destroy
-from ursina.prefabs.first_person_controller import FirstPersonController
 
 
 sign = lambda x: -1 if x <0 else (1 if x>0 else 0)
@@ -24,7 +23,7 @@ class Player(Entity):
         self.controls = "wasd"
 
         # Player values
-        self.speed = 0
+        self.speed = 30
         self.velocity_y = 0
         self.rotation_speed = 0
         self.max_rotation_speed = 2.6
@@ -99,10 +98,12 @@ class Player(Entity):
         direction = (0, sign(movementY), 0)
 
         # main raycast for collision
-        y_ray = raycast(origin = self.world_position, direction = (0,-1,0), ignore = [self, ])
-
-        if y_ray.distance <= 5:
+        self.y_ray = raycast(origin = self.world_position, direction = (0,-1,0), ignore = [self, ])
+        
+        if self.y_ray.distance <= 5:
             if held_keys[self.controls[0]] or held_keys["up arrow"]:
+                print(self.controls[0])
+                print(self.y_ray.distance)
                 self.speed += self.accelaration * 50 * time.dt
                 self.speed += -self.velocity_y * 4 * time.dt
 
@@ -132,6 +133,7 @@ class Player(Entity):
         
         if self.speed > 1 or self.speed < -1:
             if held_keys[self.controls[1]] or held_keys["left arrow"]:
+                print(self.controls[1])
                 self.rotation_speed -= self.steering_amount * time.dt
                 self.drift_speed -= 5 * time.dt
                 if self.speed > 1:
@@ -139,6 +141,7 @@ class Player(Entity):
                 elif self.speed < 0:
                     self.speed += self.turning_speed / 5 * time.dt
             elif held_keys[self.controls[3]] or held_keys["right arrow"]:
+                print(self.controls[3])
                 self.rotation_speed += self.steering_amount * time.dt
                 self.drift_speed -= 5 * time.dt
                 if self.speed > 1:
@@ -172,18 +175,18 @@ class Player(Entity):
         # check if car is hitting the ground
 
         if self.visible:
-            if y_ray.distance <= self.scale_y * 1.7 + abs(movementY):
+            if self.y_ray.distance <= self.scale_y * 1.7 + abs(movementY):
                 self.velocity_y = 0
                 # check if collision with wall or steep slope
-                if y_ray.world_normal.y > 0.7 and y_ray.world_point.y - self.world_y < 0.5:
+                if self.y_ray.world_normal.y > 0.7 and self.y_ray.world_point.y - self.world_y < 0.5:
                     # set the y value to the grounds y value
-                    self.y = y_ray.world_point.y = 1.4
+                    self.y = self.y_ray.world_point.y = 1.4
                     self.hitting_wall = False
                 else:
                     self.hitting_wall = True
                 
                 if self.copy_normals:
-                    self.ground_normal = self.position + y_ray.world_normal
+                    self.ground_normal = self.position + self.y_ray.world_normal
                 else:
                     self.ground_normal = self.position + (0,180,0)
 
@@ -203,6 +206,7 @@ class Player(Entity):
 
         movementX = self.pivot.forward[0] * self.speed * time.dt
         movementZ = self.pivot.forward[2] * self.speed * time.dt
+        
 
         # collision detection
         if movementX != 0:

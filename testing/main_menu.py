@@ -116,7 +116,11 @@ class MainMenu(Entity):
         # input fields for later use currently hard coding the IP to localhost and port 55555
         self.player.host_ip = "localhost"#InputField(default_value= "localhost", limit_content_to = "0123456789.localhost", color = color.black, alpha = 100, y = 0.1, parent = self.host_menu)
         self.player.host_port = 55555#InputField(default_value= "55555", limit_content_to = "0123456789", color = color.black, alpha = 100, y =0.02, parent = self.host_menu)
-
+        
+        # placeholders for the UI to look nicer
+        self.player.fakeIP = InputField(default_value="IP", limit_content_to = "01234566789.localhost", color = color.black, alpha = 100, y = 0.1, parent = self.host_menu)
+        self.player.fakePort = InputField(default_value= "55555", limit_content_to = "0123456789", color = color.black, alpha = 100, y =0.02, parent = self.host_menu)
+        
         # 3 different buttons for the Host_menu
         # button for creating a server
         create_server_button = Button(text = "Create Server", color = color.hex("F58300"), highlight_color = color.gray, scale_y = 0.1, scale_x = 0.3, y = -0.1, parent = self.host_menu)
@@ -155,8 +159,12 @@ class MainMenu(Entity):
         player.IP = "localhost"#InputField(default_value = "IP", limit_content_to = "0123456789.localhost", color = color.black, alpha = 100, y = 0.1, parent = self.server_menu)
         player.PORT = 55555#InputField(default_value = "PORT", limit_content_to = "0123456789", color = color.black, alpha = 100, y = 0.02, parent = self.server_menu)
         
+        # placeholders for the UI to look nice
+        player.UIIP = InputField(default_value = "IP", limit_content_to = "0123456789.localhost", color = color.black, alpha = 100, y = 0.1, parent = self.server_menu)
+        player.UIPORT = InputField(default_value = "PORT", limit_content_to = "0123456789", color = color.black, alpha = 100, y = 0.02, parent = self.server_menu)
+        
         # # join button to join server
-        join_button = Button(text = "Join Server", color = color.hex("F58300"), highlight_color = color.gray, scale_y = 0.1, scale_x = 0.3, y = -0.1, parent = self.server_menu)
+        join_button = Button(text = "Join Server", color = color.hex("6EFF33"), highlight_color = color.gray, scale_y = 0.1, scale_x = 0.3, y = -0.1, parent = self.server_menu)
         
         back_button_server = Button(text = "<- Back", color = color.gray, scale_y = 0.05, scale_x = 0.2, y = 0.45, x = -0.65, parent = self.server_menu)
 

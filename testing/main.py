@@ -68,13 +68,15 @@ Sky()
 
 
 def update():
+    
     # if multiplayer call multiplayer class should be default
     if ply.multiplayer:
         global multiplayer
         multiplayer = Multiplayer(ply)
         ply.multiplayer_update = True
         ply.multiplayer = False
-    
+
+    # Update the multiplayer and check whether the client is connected
     if ply.multiplayer_update:
         if multiplayer.client.connected:
             if ply.connected_text:
@@ -91,6 +93,7 @@ def update():
                 invoke(main_menu.not_connected.disable, delay = 2)
             main_menu.connected.disable()
 
+    # if the user is hosting the server, update the server
     if ply.multiplayer_running:
         ply.server.update_server()
         if ply.server.server_update:
@@ -98,11 +101,11 @@ def update():
 
     # not player inputs but values sent from client to server to send to other clients in the same server 
 def input(key):
-
+    print(key)
     if ply.multiplayer_update:
         multiplayer.client.send_message("MyPosition", tuple(ply.position))
         multiplayer.client.send_message("MyRotation", tuple(ply.rotation))
         multiplayer.client.send_message("MyTexture", str(ply.texture))
-        multiplayer.client.send_message("MyModel", str("cube"))
+        multiplayer.client.send_message("MyModel", str(ply.model))
 
 app.run()

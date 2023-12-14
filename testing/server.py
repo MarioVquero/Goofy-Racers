@@ -10,19 +10,18 @@ class Server:
         self.server_update = False
 
     def update_server(self):
-        # print("starting server ")
         if self.start_server:
             self.server = UrsinaNetworkingServer(self.ip, int(self.port))
             self.easy = EasyUrsinaNetworkingServer(self.server)
 
             @self.server.event
-            def OnClientConnected(client):
+            def onClientConnected(client):
                 self.easy.create_replicated_variable(
                     f"player_{client.id}",
-                    {"type": "player", "id": client.id, "position":(0,0,0),"rotation": (0,0,0),"model": "cube", "texture": "grass.png"}
+                    { "type" : "player", "id" : client.id, "position": (0, 0, 0), "rotation" : (0, 0, 0), "model" : "cube", "texture" : "grass.png"}
                 )
-                print(f"{client} connected!!")
-                client.send_message("GetID", client.id)
+                print(f"{client} connected!")
+                client.send_message("GetId", client.id)
             
             @self.server.event
             def onClientDisconnected(client):
@@ -30,18 +29,22 @@ class Server:
 
             @self.server.event
             def MyPosition(client,newpos):
+                print(newpos)
                 self.easy.update_replicated_variable_by_name(f"player_{client.id}", "position", newpos)
 
             @self.server.event
             def MyRotation(client, newrot):
+                print(newrot)
                 self.easy.update_replicated_variable_by_name(f"player_{client.id}", "rotation", newrot)
 
             @self.server.event
             def MyModel(client, newmodel):
+                print(newmodel)
                 self.easy.update_replicated_variable_by_name(f"player_{client.id}", "model", newmodel)
 
             @self.server.event
             def MyTexture(client, newtex):
+                print(newtex)
                 self.easy.update_replicated_variable_by_name(f"player_{client.id}", "texture", newtex)
             
             self.server_update = True
