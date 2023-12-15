@@ -7,7 +7,7 @@ sign = lambda x: -1 if x <0 else (1 if x>0 else 0)
 
 # the player class that has all the default values
 class Player(Entity):
-    def __init__(self, position = (0,0,0), rotation = (0,0,0), topSpeed = 10, accelaration = 1, brakingStrength = 30, friction = 1, cameraSpeed = 10):
+    def __init__(self, position = (0,0,4), rotation = (0,0,0), topSpeed = 10, accelaration = 1, brakingStrength = 30, friction = 1, cameraSpeed = 10):
         super().__init__(
             model = "cube",
             texture = "grass.png",
@@ -23,9 +23,9 @@ class Player(Entity):
         self.controls = "wasd"
 
         # Player values
-        self.speed = 30
-        self.velocity_y = 10
-        self.rotation_speed = 10
+        self.speed = 0
+        self.velocity_y = 0
+        self.rotation_speed = 0
         self.max_rotation_speed = 2.6
         self.steering_amount = 8
         self.topSpeed = topSpeed
@@ -38,12 +38,13 @@ class Player(Entity):
 
         # Camera Follows the player
         self.camera_angle = "top"
-        self.camera_offset = (0,60,-70)
+        self.camera_offset = (0,100,0)
         self.camera_rotation = 40
-        self.camera_follow = False
+        self.camera_follow = True
         self.change_camera = False
         self.c_pivot = Entity()
         self.camera_pivot = Entity(parent = self.c_pivot, position = self.camera_offset)
+        
 
         # pivots 
         self.pivot = Entity()
@@ -87,15 +88,20 @@ class Player(Entity):
 
     def update(self):
         if self.camera_follow:
+            # print(f"Camera POS: {camera.position} \n Player POS: {Player.position}")
             if self.camera_angle == "top":
+                # camera.rotation_x = 50
+                # used to change the camera to a different POV cant be used at the moment
                 if self.change_camera:
                     camera.rotation_x  = 35
                     self.camera_rotation = 40
-                self.camera_offset = (0, 60, -70)
+                
+                self.camera_offset = (0,100,0)
                 self.camera_speed = 4
                 self.change_camera = False
-                camera.rotation_x = lerp(camera.rotation_x, self.camera_rotation, 2 * time.dt)
+                # camera.rotation_x = lerp(camera.rotation_x, self.camera_rotation, 2 * time.dt)
                 camera.world_position = lerp(camera.world_position, self.camera_pivot.world_position, time.dt * self.camera_speed / 2)
+                # print(camera.world_position)
                 camera.world_rotation_y = lerp(camera.world_rotation_y, self.world_rotation_y, time.dt * self.camera_speed / 2)
             
         # self.pivot_rotation_distance = (self.rotation_y - self.pivot.rotation_y)
@@ -110,7 +116,7 @@ class Player(Entity):
         if y_ray.distance <= 10:
             if held_keys[self.controls[0]] or held_keys["up arrow"]:
                 print(self.controls[0])
-                print(y_ray.distance)
+                # print(y_ray.distance)
                 self.speed += self.accelaration * 50 * time.dt
                 self.speed += -self.velocity_y * 4 * time.dt
 
@@ -154,11 +160,11 @@ class Player(Entity):
                 elif self.speed < 0:
                     self.speed += self.turning_Speed / 5 * time.dt
 
-        # # Cap the speed
-        # if self.speed >= self.topspeed:
-        #     self.speed = self.topspeed
-        # if self.speed <= -15:
-        #     self.speed = -15
+        # Cap the speed
+        if self.speed >= self.topSpeed:
+            self.speed = self.topSpeed
+        if self.speed <= -15:
+            self.speed = -15
         # if self.speed <= 0:
         #     self.pivot.rotation_y = self.rotation_y
 
@@ -168,32 +174,44 @@ class Player(Entity):
         elif self.camera_rotation <= 30:
             self.camera_rotation = 30
 
+        if self.rotation_speed >= self.max_rotation_speed:
+            self.rotation_speed = self.max_rotation_speed
+        if self.rotation_speed <= -self.max_rotation_speed:
+            self.rotation_speed = -self.max_rotation_speed
+
         # rotation
         self.rotation_parent.position = self.position
 
-        # not sure if necessart but leaving uncommented for easy access
+
+        # not sure if necessary but leaving uncommented for easy access
         # Lerps the car's rotation to the rotation parent's rotation (Makes it smoother)
-        # self.rotation_x = lerp(self.rotation_x, self.rotation_parent.rotation_x, 20 * time.dt)
-        # self.rotation_z = lerp(self.rotation_z, self.rotation_parent.rotation_z, 20 * time.dt)
+        self.rotation_x = lerp(self.rotation_x, self.rotation_parent.rotation_x, 20 * time.dt)
+        self.rotation_z = lerp(self.rotation_z, self.rotation_parent.rotation_z, 20 * time.dt)
 
         # check if car is hitting the ground
 
         if self.visible:
-            print(y_ray.distance)
-            if y_ray.distance <= self.scale_y * 2 + abs(movementY):
+            # print(y_ray.distance)
+            if y_ray.distance <= self.scale_y * 1.7 + abs(movementY):
+                # resets velocity of falling so it doesnt add up
                 self.velocity_y = 0
+
+                
                 # check if collision with wall or steep slope
+                ############################
+                # YOURE THE FUCKING PROBLEM
                 if y_ray.world_normal.y > 0.7 and y_ray.world_point.y - self.world_y < 0.5:
                     # set the y value to the grounds y value
-                    self.y = y_ray.world_point.y = 1.4
+                    self.y = y_ray.world_point.y + 1.4
                     self.hitting_wall = False
                 else:
                     self.hitting_wall = True
-                
+                ############################
                 if self.copy_normals:
                     self.ground_normal = self.position + y_ray.world_normal
                 else:
                     self.ground_normal = self.position + (0,180,0)
+
 
                 # rotates the car according the ground normals
                 if not self.hitting_wall:
@@ -202,6 +220,7 @@ class Player(Entity):
 
                 else:
                     self.rotation_parent.rotation = self.rotation
+
 
             else:
                 self.y += movementY * 50 * time.dt
@@ -218,7 +237,7 @@ class Player(Entity):
             direction = (sign(movementX),0,0)
             x_ray = raycast(origin  = self.world_position, direction= direction, ignore = [self,])
 
-            if x_ray> self.scale_x/2 + abs(movementX):
+            if x_ray.distance > self.scale_x/2 + abs(movementX):
                 self.x += movementX
 
         if movementZ != 0:
@@ -226,7 +245,7 @@ class Player(Entity):
             z_ray = raycast(origin = self.world_position, direction = direction, ignore = [self, ])
 
             if z_ray.distance > self.scale_z /2 + abs(movementZ):
-                self.z == movementZ
+                self.z += movementZ
 
 
 # class to copy and update the players position and rotation for multiplayer
@@ -241,10 +260,13 @@ class  PlayerRep(Entity):
             rotation = rotation,
             scale = (1,1,1)
         )
-
+        self.player = player
         invoke(self.update_rep,delay = 5)
-
+    
+    # used to continuously update the pos and rot of the PlayerRep to match the values of the Player
     def update_rep(self):
+        self.position = self.player.position
+        self.rotation = self.player.rotation
         invoke(self.update_rep, delay = 5)
 
 

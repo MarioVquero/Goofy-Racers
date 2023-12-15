@@ -5,9 +5,9 @@ class MainTrack(Entity):
         super().__init__(
             model = "cube",
             texture = "grass.png",
-            position = (0,-1,0),
+            position = (0,-2,0),
             rotation = (0,270,0),
-            scale = (100,1,100),
+            scale = (1000,1,1000),
             collider = "cube"
         )
 

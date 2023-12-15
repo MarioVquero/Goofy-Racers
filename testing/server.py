@@ -29,22 +29,22 @@ class Server:
 
             @self.server.event
             def MyPosition(client,newpos):
-                print(newpos)
+                print(f"Position: {newpos}")
                 self.easy.update_replicated_variable_by_name(f"player_{client.id}", "position", newpos)
 
             @self.server.event
             def MyRotation(client, newrot):
-                print(newrot)
+                print(f"Rotation: {newrot}")
                 self.easy.update_replicated_variable_by_name(f"player_{client.id}", "rotation", newrot)
 
             @self.server.event
             def MyModel(client, newmodel):
-                print(newmodel)
+                print(f"Model: {newmodel}")
                 self.easy.update_replicated_variable_by_name(f"player_{client.id}", "model", newmodel)
 
             @self.server.event
             def MyTexture(client, newtex):
-                print(newtex)
+                print(f"Texture: {newtex}")
                 self.easy.update_replicated_variable_by_name(f"player_{client.id}", "texture", newtex)
             
             self.server_update = True
