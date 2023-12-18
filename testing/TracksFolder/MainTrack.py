@@ -3,12 +3,12 @@ from ursina import *
 class MainTrack(Entity):
     def __init__(self, player):
         super().__init__(
-            model = "cube",
+            model = "UROAD.obj",
             texture = "grass.png",
-            position = (0,-2,0),
+            position = (0,-10,0),
             rotation = (0,270,0),
-            scale = (1000,1,1000),
-            collider = "cube"
+            scale = (10,1,10),
+            collider = "mesh"
         )
 
         self.ply = player

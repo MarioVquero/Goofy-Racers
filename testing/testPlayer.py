@@ -2,6 +2,9 @@ from ursinanetworking import *
 from ursina import Entity, Vec3, color,destroy
 
 
+carSTR = "Low_Poly_Car.obj"
+carTex = "Wheel Base Color.png"
+
 sign = lambda x: -1 if x <0 else (1 if x>0 else 0)
 # have to make a camera because FirstPersonController bugs out the whole thing
 
@@ -9,8 +12,8 @@ sign = lambda x: -1 if x <0 else (1 if x>0 else 0)
 class Player(Entity):
     def __init__(self, position = (0,0,4), rotation = (0,0,0), topSpeed = 10, accelaration = 1, brakingStrength = 30, friction = 1, cameraSpeed = 10):
         super().__init__(
-            model = "cube",
-            texture = "grass.png",
+            model = carSTR,
+            texture = carTex,
             collider = "box",
             position = position,
             rotation = rotation
@@ -30,14 +33,14 @@ class Player(Entity):
         self.steering_amount = 8
         self.topSpeed = topSpeed
         self.brakingStrength = brakingStrength
-        self.cameraSpeed = cameraSpeed
+        self.camera_speed = cameraSpeed
         self.accelaration = accelaration
         self.friction = friction
         self.turning_Speed = 5
         
 
         # Camera Follows the player
-        self.camera_angle = "top"
+        self.camera_angle = "behind"
         self.camera_offset = (0,100,0)
         self.camera_rotation = 40
         self.camera_follow = True
@@ -78,8 +81,8 @@ class Player(Entity):
         self.disconnected_text = False
 
     def player_car(self):
-        self.model = "cube"
-        self.texture = "grass.png"
+        self.model = carSTR
+        self.texture = carTex
         self.topSpeed = 30
         self.accelaration = 10
         self.turning_Speed = 7
@@ -87,6 +90,13 @@ class Player(Entity):
         self.steering_amount = 7.5
 
     def update(self):
+        
+        # help keep track of the player
+        self.pivot.position = self.position
+        self.c_pivot.position = self.position
+        self.c_pivot.rotation_y = self.rotation_y
+        self.camera_pivot.position = self.camera_offset
+
         if self.camera_follow:
             # print(f"Camera POS: {camera.position} \n Player POS: {Player.position}")
             if self.camera_angle == "top":
@@ -103,6 +113,27 @@ class Player(Entity):
                 camera.world_position = lerp(camera.world_position, self.camera_pivot.world_position, time.dt * self.camera_speed / 2)
                 # print(camera.world_position)
                 camera.world_rotation_y = lerp(camera.world_rotation_y, self.world_rotation_y, time.dt * self.camera_speed / 2)
+            
+            elif self.camera_angle == "behind":
+                camera.rotation_x = 12
+                self.camera_rotation = 40
+                self.camera_offset = (0,10,-30)
+                self.camera_speed = 8
+                
+                print(f"Camera POS: {camera.world_position}")
+                # works on the x axis of rotation
+                camera.rotation_x = lerp(camera.rotation_x,self.camera_rotation /3, 2 * time.dt)
+                
+                print(f"Cam Pivot: {self.camera_pivot.world_position}")
+                print(self.camera_speed)
+                # handles cam position
+                camera.world_position = lerp(camera.world_position, self.camera_pivot.world_position, time.dt * self.camera_speed / 2)
+                
+
+                # works on the y axis of rotation 
+                camera.world_rotation_y = lerp(camera.world_rotation_y, self.world_rotation_y, time.dt * self.camera_speed/2)
+
+                print(f"Time.DT : {time.dt} \n CamSpeed :{self.camera_speed} \n CamPos: {camera.world_position} \n PlayerPos : {self.position}")
             
         # self.pivot_rotation_distance = (self.rotation_y - self.pivot.rotation_y)
 
@@ -142,38 +173,47 @@ class Player(Entity):
         if self.rotation_speed > 0:
             self.rotation_speed -= self.speed / 6 * time.dt
         elif self.rotation_speed < 0:
-            self.rotation_speed += self.speed /6 * time.dt
+            self.rotation_speed += self.speed / 6 * time.dt
         
         if self.speed > 1 or self.speed < -1:
             if held_keys[self.controls[1]] or held_keys["left arrow"]:
                 print(self.controls[1])
                 self.rotation_speed -= self.steering_amount * time.dt
+                
                 if self.speed > 1:
                     self.speed -= self.turning_Speed * time.dt
                 elif self.speed < 0:
                     self.speed += self.turning_Speed / 5 * time.dt
+            
             elif held_keys[self.controls[3]] or held_keys["right arrow"]:
                 print(self.controls[3])
                 self.rotation_speed += self.steering_amount * time.dt
+                
                 if self.speed > 1:
                     self.speed -= self.turning_Speed * time.dt
                 elif self.speed < 0:
                     self.speed += self.turning_Speed / 5 * time.dt
+            else:
+                if self.rotation_speed > 0:
+                    self.rotation_speed -= 5 * time.dt
+                elif self.rotation_speed < 0:
+                    self.rotation_speed += 5 * time.dt
+        else:
+            self.rotation_speed = 0 
 
         # Cap the speed
         if self.speed >= self.topSpeed:
             self.speed = self.topSpeed
         if self.speed <= -15:
             self.speed = -15
-        # if self.speed <= 0:
-        #     self.pivot.rotation_y = self.rotation_y
-
+        
         # Cap the camera rotation
         if self.camera_rotation >= 40:
             self.camera_rotation = 40
         elif self.camera_rotation <= 30:
             self.camera_rotation = 30
 
+        # steering limit
         if self.rotation_speed >= self.max_rotation_speed:
             self.rotation_speed = self.max_rotation_speed
         if self.rotation_speed <= -self.max_rotation_speed:
@@ -216,8 +256,11 @@ class Player(Entity):
                 # rotates the car according the ground normals
                 if not self.hitting_wall:
                     self.rotation_parent.look_at(self.ground_normal, axis="up")
-                    # self.rotation_parent.rotate((0,self.rotation_y + 180, 0))
 
+                    # self.rotation_parent.rotate((0,self.rotation_y + 180, 0))
+                    # self.rotation_parent.rotate((0, self.rotation_y + 180, 0))
+                    # line 261 is the issue its supposed to rotate a thing on its axis but it says it doesnt exist
+                
                 else:
                     self.rotation_parent.rotation = self.rotation
 
@@ -227,7 +270,7 @@ class Player(Entity):
                 self.velocity_y -= 50 * time.dt
                 self.rotation_parent.rotation = self.rotation
                 
-
+        # movement
         movementX = self.pivot.forward[0] * self.speed * time.dt
         movementZ = self.pivot.forward[2] * self.speed * time.dt
         
@@ -253,8 +296,8 @@ class  PlayerRep(Entity):
     def __init__(self, player, position = (0,0,0), rotation = (0,0,0)):
         super().__init__(
             parent = scene,
-            model = "cube",
-            texture = "grass.png",
+            model = carSTR,
+            texture = carTex,
             collider = "box",
             position = position,
             rotation = rotation,
