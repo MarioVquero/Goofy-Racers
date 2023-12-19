@@ -62,11 +62,6 @@ main_menu = main_menu.MainMenu(ply, main_track)
 
 Sky()
 
-
-
-
-
-
 def update():
 
     # if multiplayer call multiplayer class should be default
