@@ -80,6 +80,7 @@ class MainMenu(Entity):
             player.multiplayer = True
             self.created_server_menu.disable()
             self.main_menu.enable()
+            main_track_func()
 
         # stops server from running
         def stop_server():
@@ -89,7 +90,9 @@ class MainMenu(Entity):
         # joins server and switching UI again
         def join_server():
             if str(self.player.IP) != "IP" and str(self.player.PORT) != "PORT":
+                print(player.multiplayer)
                 player.multiplayer = True
+                print(player.multiplayer)
                 self.server_menu.disable()
                 self.main_menu.enable()
                 main_track_func()

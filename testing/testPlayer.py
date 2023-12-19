@@ -3,7 +3,7 @@ from ursina import Entity, Vec3, color,destroy
 from ursina.prefabs.first_person_controller import FirstPersonController
 
 
-carSTR = "Low_Poly_Car.obj"
+carSTR = Entity(model='Low_Poly_Car.obj')
 carTex = "Wheel Base Color.png"
 
 sign = lambda x: -1 if x <0 else (1 if x>0 else 0)
@@ -13,12 +13,11 @@ sign = lambda x: -1 if x <0 else (1 if x>0 else 0)
 class Player(Entity):
     def __init__(self, position = (0,0,4), rotation = (0,0,0), topSpeed = 10, accelaration = 1, brakingStrength = 30, friction = 1, cameraSpeed = 10, drift_speed = 35):
         super().__init__(
-            model = carSTR,
-            texture = carTex,
-            collider = "box",
             position = position,
-            rotation = rotation
-        )
+            rotation = rotation,
+            model = carSTR,
+            texture = carTex
+            )
 
         # Rotation parent
         self.rotation_parent = Entity()
@@ -78,7 +77,7 @@ class Player(Entity):
         # multiplayer bools
         self.multiplayer = False
         self.multiplayer_update = False
-        self.multiplayer_running = False
+        self.server_running = False
 
         # show if youre connected to a server or not
         self.connected_text = True
@@ -95,7 +94,8 @@ class Player(Entity):
         self.drift_speed = 35
 
     def update(self):
-        
+        # spacer to make reading prints easier
+        print("\n")
         # help keep track of the player
         # print(f"POS: {self.position}")
         self.pivot.position = self.position
@@ -333,6 +333,9 @@ class Player(Entity):
             if z_ray.distance > self.scale_z /2 + abs(movementZ):
                 self.z += movementZ
 
+        # spacer to make reading prints easier
+        print("\n")
+        
 # class to copy and update the players position and rotation for multiplayer
 class  PlayerRep(Entity):
     def __init__(self, player, position = (0,0,0), rotation = (0,0,0)):
@@ -347,7 +350,8 @@ class  PlayerRep(Entity):
         )
         self.player = player
         invoke(self.update_rep,delay = 5)
-    
+        print("testing server updating")
+        
     # used to continuously update the pos and rot of the PlayerRep to match the values of the Player
     def update_rep(self):
         self.position = self.player.position

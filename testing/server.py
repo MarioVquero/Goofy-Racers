@@ -10,6 +10,7 @@ class Server:
         self.server_update = False
 
     def update_server(self):
+        print("\nServer.py")
         if self.start_server:
             self.server = UrsinaNetworkingServer(self.ip, int(self.port))
             self.easy = EasyUrsinaNetworkingServer(self.server)
@@ -23,14 +24,20 @@ class Server:
                 print(f"{client} connected!")
                 client.send_message("GetId", client.id)
             
+            # spacers for reading prints easier
+            
             @self.server.event
             def onClientDisconnected(client):
                 self.easy.remove_replicated_variable_by_name(f"player_{client.id}")
 
             @self.server.event
             def MyPosition(client,newpos):
+                
+                print(f"\nClient: {client}")
                 print(f"Position: {newpos}")
                 self.easy.update_replicated_variable_by_name(f"player_{client.id}", "position", newpos)
+                print(self.easy)
+                
 
             @self.server.event
             def MyRotation(client, newrot):
@@ -44,11 +51,14 @@ class Server:
 
             @self.server.event
             def MyTexture(client, newtex):
-                print(f"Texture: {newtex}")
+                print(f"Texture: {newtex}\n")
                 self.easy.update_replicated_variable_by_name(f"player_{client.id}", "texture", newtex)
             
             self.server_update = True
             self.start_server = False
+
+            # spacers for reading prints easier
+        print("\n")
 
 if __name__ == "__main__":
     
@@ -73,7 +83,7 @@ if __name__ == "__main__":
         # ip.disable()
         # port.disable()
         stop_button.enable()
-        print("Server has been made")
+        print(f"\nServer with IP:{ip} and Port:{port} has been created\n")
 
     def stop_server():
         os._exit(0)
@@ -88,6 +98,7 @@ if __name__ == "__main__":
     def update():
         server.update_server()
         if server.server_update == True:
+            # print("updatingServer")
             server.easy.process_net_events()
 
     app.run()
