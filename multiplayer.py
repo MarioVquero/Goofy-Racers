@@ -37,7 +37,7 @@ class Multiplayer(Entity):
                 self.players_target_pos[variable_name] = Vec3(-80,-30,15)
                 self.players_target_rot[variable_name] = Vec3(0,90,0)
 
-                self.players_target_model[variable_name] = "cube"
+                self.players_target_model[variable_name] = "Low_Poly_Car.obj"
                 self.players_target_tex[variable_name] = "grass.png"
                 self.players[variable_name] = PlayerRep(self.player, (-80, -30, 15), (0, 90, 0))
 

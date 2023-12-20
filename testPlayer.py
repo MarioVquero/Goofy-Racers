@@ -3,7 +3,7 @@ from ursina import Entity, Vec3, color,destroy
 from ursina.prefabs.first_person_controller import FirstPersonController
 
 
-carSTR = Entity(model='Low_Poly_Car.obj')
+# carSTR = "Low_Poly_Car.obj"
 carTex = "Wheel Base Color.png"
 
 sign = lambda x: -1 if x <0 else (1 if x>0 else 0)
@@ -15,7 +15,7 @@ class Player(Entity):
         super().__init__(
             position = position,
             rotation = rotation,
-            model = carSTR,
+            model = "Low_Poly_Car.obj",
             texture = carTex
             )
 
@@ -83,8 +83,13 @@ class Player(Entity):
         self.connected_text = True
         self.disconnected_text = False
 
+        self.model_path = str(self.model).replace("render/scene/player", "")
+
+        invoke(self.update_model_path,delay = 5)
+
+
     def player_car(self):
-        self.model = carSTR
+        self.model = "Low_Poly_Car.obj"
         self.texture = carTex
         self.topSpeed = 60
         self.accelaration = 10
@@ -336,12 +341,21 @@ class Player(Entity):
         # spacer to make reading prints easier
         print("\n")
         
+
+    def update_model_path(self):
+        """
+        Updates the models path for multiplayer
+        """
+        self.model_path = str(self.model).replace("render/scene/player/", "")
+        invoke(self.update_model_path,delay =3)
+
+
 # class to copy and update the players position and rotation for multiplayer
 class  PlayerRep(Entity):
     def __init__(self, player, position = (0,0,0), rotation = (0,0,0)):
         super().__init__(
             parent = scene,
-            model = carSTR,
+            model = "Low_Poly_Car.obj",
             texture = carTex,
             collider = "box",
             position = position,

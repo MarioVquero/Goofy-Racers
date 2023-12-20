@@ -125,7 +125,7 @@ def input(key):
         multiplayer.client.send_message("MyTexture", str(ply.texture))
         print(f"TEXTURE: {ply.texture}")
         
-        multiplayer.client.send_message("MyModel", str(ply.model))
+        multiplayer.client.send_message("MyModel", str(ply.model_path))
         print(f"MODEL: {ply.model}")
 
     # spacers to make reading prints easier
