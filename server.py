@@ -10,7 +10,7 @@ class Server:
         self.server_update = False
 
     def update_server(self):
-        print("\nServer.py")
+        # print("\nServer.py")
         if self.start_server:
             self.server = UrsinaNetworkingServer(self.ip, int(self.port))
             self.easy = EasyUrsinaNetworkingServer(self.server)
@@ -58,7 +58,7 @@ class Server:
             self.start_server = False
 
             # spacers for reading prints easier
-        print("\n")
+        # print("\n")
 
 if __name__ == "__main__":
     
@@ -83,7 +83,7 @@ if __name__ == "__main__":
         # ip.disable()
         # port.disable()
         stop_button.enable()
-        print(f"\nServer with IP:{ip} and Port:{port} has been created\n")
+        # print(f"\nServer with IP:{ip} and Port:{port} has been created\n")
 
     def stop_server():
         os._exit(0)

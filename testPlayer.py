@@ -40,13 +40,13 @@ class Player(Entity):
         self.pivot_rotation_distance = 1
         self.drift_speed = drift_speed
         self.drift_amount = 4.5
-        self.max_drift_speed = 40
-        self.min_drift_speed = 20
+        self.max_drift_speed = 20
+        self.min_drift_speed = 10
 
 
 
 
-        # Camera Follows the player
+        # Camera Values to follow the players
         self.camera_angle = "behind"
         self.camera_offset = (0,100,0)
         self.camera_rotation = 40
@@ -93,10 +93,10 @@ class Player(Entity):
         self.texture = carTex
         self.topSpeed = 60
         self.accelaration = 10
-        self.turning_Speed = 30
+        self.turning_Speed = 10
         self.max_rotation_speed = 6
         self.steering_amount = 15
-        self.drift_speed = 35
+        self.drift_speed = 20
 
     def update(self):
         # spacer to make reading prints easier
@@ -188,7 +188,9 @@ class Player(Entity):
         # main raycast for collision
         y_ray = raycast(origin=self.world_position,direction=(0,-1,0),ignore=[self,])
         
+        # NOTE: can only drive if on the ground
         if y_ray.distance <= 5:
+            # Holding W or Up Arrow allows you and your camera to move forward
             if held_keys[self.controls[0]] or held_keys["up arrow"]:
                 
                 self.speed += self.accelaration * 50 * time.dt
@@ -238,9 +240,9 @@ class Player(Entity):
 
             else:
                 if self.rotation_speed > 0:
-                    self.rotation_speed -= 5 * time.dt
+                    self.rotation_speed = 0#5 * time.dt
                 elif self.rotation_speed < 0:
-                    self.rotation_speed += 5 * time.dt
+                    self.rotation_speed = 0#5 * time.dt
                     
         # Cap the speed
         if self.speed >= self.topSpeed:
@@ -362,6 +364,7 @@ class  PlayerRep(Entity):
             rotation = rotation,
             scale = (1,1,1)
         )
+        self.model_path = str(self.model).replace("render/scene/playerRep/","")
         self.player = player
         invoke(self.update_rep,delay = 5)
         print("testing server updating")

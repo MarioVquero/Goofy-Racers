@@ -105,14 +105,14 @@ def update():
     # if the user is hosting the server, update the server
             
     if ply.server_running:
-        print("Server Running: {ply.server_running}")
+        print(f"Server Running: {ply.server_running}")
         ply.server.update_server()
         if ply.server.server_update:
             print(f"Server Updating: {ply.server.server_update}")
             ply.server.easy.process_net_events()
     
 
-    # not player inputs but values sent from client to server to send to other clients in the same server 
+    # NOTE:not player inputs but values sent from client to server to send to other clients in the same server 
 def input(key):
     print(f"can multi update: {ply.multiplayer_update}")
     if ply.multiplayer_update:

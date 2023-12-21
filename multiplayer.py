@@ -27,9 +27,12 @@ class Multiplayer(Entity):
                 self.selfid = id
                 print(f"My ID is : {self.selfid}")
 
-            # when a new player joins
+            
             @self.easy.event
             def onReplicatedVariableCreated(variable):
+                """
+                    When a client/player joins this helps the other client/player see them in real time
+                """
                 print(f"rep var created: {variable}")
                 variable_name = variable.name
                 
@@ -48,6 +51,11 @@ class Multiplayer(Entity):
             # updates when the player moves or rotates 
             @self.easy.event
             def onReplicatedVariableUpdated(variable):
+                """
+                    Whenever the variables below change on the player it sends a message
+                    to the server and updates the values there
+                """
+                print("updating rep var")
                 self.players_target_pos[variable.name] = variable.content["position"]
                 self.players_target_rot[variable.name] = variable.content["rotation"]
                 self.players_target_model[variable.name] = variable.content["model"]
@@ -56,6 +64,10 @@ class Multiplayer(Entity):
             # removes the player from everything on disconnect
             @self.easy.event
             def onReplicatedVaribaleRemoved(variable):
+                """
+                    Whenever a client/player leaves the server the list of players updates
+                    to remove the player from it using the ID
+                """
                 variable_name = variable.name
                 
                 destroy(self.players[variable_name])
