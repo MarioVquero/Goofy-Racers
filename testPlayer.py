@@ -157,26 +157,40 @@ class Player(Entity):
         if self.pivot.rotation_y != self.rotation_y:
 
             if self.pivot.rotation_y > self.rotation_y:
+                
                 print("rotate left")
                 self.pivot.rotation_y -= (self.drift_speed * ((self.pivot.rotation_y - self.rotation_y) / 40)) * time.dt
+                
+                
                 if self.speed > 1 or self.speed < -1:
                     self.speed += self.pivot_rotation_distance / self.drift_amount * time.dt
                 self.camera_rotation -= self.pivot_rotation_distance / 3 * time.dt
                 self.rotation_speed -= 1 * time.dt
+                
+                
                 if self.pivot_rotation_distance >= 50 or self.pivot_rotation_distance <= -50:
                     self.drift_speed += self.pivot_rotation_distance / 5 * time.dt
+                
+                
                 else:
                     self.drift_speed -= self.pivot_rotation_distance / 5 * time.dt
             
             if self.pivot.rotation_y < self.rotation_y:
+
                 print(f"rotate right \n")
                 self.pivot.rotation_y += (self.drift_speed * ((self.rotation_y - self.pivot.rotation_y) / 40)) * time.dt
+                
+                
                 if self.speed > 1 or self.speed < -1:
                     self.speed -= self.pivot_rotation_distance / self.drift_amount * time.dt
                 self.camera_rotation += self.pivot_rotation_distance / 3 * time.dt
                 self.rotation_speed += 1 * time.dt
+                
+                
                 if self.pivot_rotation_distance >= 50 or self.pivot_rotation_distance <= -50:
                     self.drift_speed -= self.pivot_rotation_distance / 5 * time.dt
+                
+                
                 else:
                     self.drift_speed += self.pivot_rotation_distance / 5 * time.dt
 
