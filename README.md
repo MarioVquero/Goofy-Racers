@@ -9,6 +9,7 @@ Complete Features:
 <li>basic UI</li>
 </ul>
 
+<img src="./Assets/GoofyRacersPic.png">
 
 
 Features currently in development:
@@ -18,6 +19,6 @@ Features currently in development:
 <li>better UI</li>
 </ul>
 
-CAR MODEL: 3D Low Poly Car model by [Ceasaryo](https://www.turbosquid.com/3d-models/3d-low-poly-car-model-1933572)
+Car Model: 3D Low Poly Car model by [Ceasaryo](https://www.turbosquid.com/3d-models/3d-low-poly-car-model-1933572)
 
-Track: Mario Vs
+Track Model: Mario V
