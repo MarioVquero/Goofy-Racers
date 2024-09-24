@@ -9,6 +9,7 @@ class Server:
         self.start_server = False
         self.server_update = False
 
+    # all information needed to send to the server
     def update_server(self):
         # print("\nServer.py")
         if self.start_server:

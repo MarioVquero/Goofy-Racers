@@ -66,7 +66,7 @@ class Player(Entity):
         self.hitting_wall = False
         self.atFinishLine = False
         
-        # books for driving
+        # bools for driving
         self.driving = False
         self.driving = True
 
@@ -152,9 +152,10 @@ class Player(Entity):
         self.pivot_rotation_distance = (self.rotation_y - self.pivot.rotation_y)
         
 
-        # Drifting
+        # Drifting/Turning
+        # NOTE: this is necessary for making the car turn
         print(f"PivotRotY: {self.pivot.rotation_y} \n RotY: {self.rotation_y}")
-        if self.pivot.rotation_y != self.rotation_y:
+        if self.pivot.rotation_y != self.rotation_y and self.driving:
 
             if self.pivot.rotation_y > self.rotation_y:
                 
