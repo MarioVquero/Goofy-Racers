@@ -9,7 +9,9 @@ Complete Features:
 <li>basic UI</li>
 </ul>
 
-<img src="./Assets/GoofyRacersPic.png">
+# Link to Demo Video
+[<img src="./Assets/GoofyRacersPic.png">](https://www.youtube.com/watch?v=gvkPlC8TyKA)
+
 
 
 Features currently in development:
